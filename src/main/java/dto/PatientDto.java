@@ -7,8 +7,6 @@ import java.time.LocalDate;
 
 @Data
 public class PatientDto {
-    @Positive
-    @NotNull(message = "Le champ 'id' est obligatoire")
     private long id;
     @NotNull(message = "Le champ 'nom' est obligatoire")
     private String nom;
@@ -22,5 +20,5 @@ public class PatientDto {
     private LocalDate dateNaissance;
     @NotNull(message = "Le champ 'telephone' est obligatoire")
     @Size(min = 10, max = 12, message = "Le champ 'telephone' doit être entre 10 et 12 caractères")
-    private int telephone;
+    private String telephone;
 }

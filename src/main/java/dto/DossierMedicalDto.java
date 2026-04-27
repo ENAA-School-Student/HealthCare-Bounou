@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class DossierMedicalDto {
-    private int id;
-    @NotNull(message = "Le champ 'diagnostic' est obligatoire")
+    private long id;
     private String diagnostic;
+    private String observation;
 }

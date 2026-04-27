@@ -17,7 +17,8 @@ create table medecin(
 
 create table dossier_medical(
     id BIGINT primary key auto_increment,
-    diagnostic varchar(255) not null,
+    diagnostic varchar(255) ,
+    observation varchar(255) ,
     medecin_id int not null,
     date_creation datetime not null,
     patient_id BIGINT UNIQUE NOT NULL,

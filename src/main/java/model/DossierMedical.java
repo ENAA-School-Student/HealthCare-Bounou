@@ -21,6 +21,7 @@ public class DossierMedical {
     private long id;
 
     private String diagnostic;
+    private String observation;
     private LocalDate dateCreation;
 
     @OneToMany(mappedBy = "dossierMedical", cascade = CascadeType.ALL)

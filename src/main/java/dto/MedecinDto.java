@@ -10,7 +10,6 @@ import java.time.LocalDate;
 
 @Data
 public class MedecinDto {
-    @NotNull(message = "Le champ 'id' est obligatoire")
     private long id;
     @NotNull(message = "Le champ 'nom' est obligatoire")
     private String nom;
