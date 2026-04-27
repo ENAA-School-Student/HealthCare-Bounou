@@ -21,8 +21,8 @@ public class Medecin {
     private String nom;
     private String specialite;
     private String email;
-    private int telephone;
+    private String telephone;
 
-    @OneToMany(mappedBy = "medecin")
+    @OneToMany(mappedBy = "medecin", cascade = CascadeType.ALL)
     private List<RendezVous> rendezVousList;
 }

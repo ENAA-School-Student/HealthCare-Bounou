@@ -20,7 +20,8 @@ public class RendezVous {
 
     private LocalDateTime dateRendezVous;
     @Enumerated(EnumType.STRING)
-    private StatusRendezVous statusRendezVous;
+    @Column(name = "status")
+    private StatusRendezVous status;
 
     @ManyToOne
     @JoinColumn(name = "patient_id")

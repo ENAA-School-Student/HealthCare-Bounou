@@ -22,12 +22,10 @@ public class Patient {
 
     private String nom;
     private String prenom;
-
     private String email;
     private LocalDate dateNaissance;
+    private String telephone;
 
-    private int phone;
-
-    @OneToMany(mappedBy = "patient")
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<RendezVous> rendezVousList;
 }

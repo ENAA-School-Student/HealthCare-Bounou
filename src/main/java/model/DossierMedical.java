@@ -23,6 +23,6 @@ public class DossierMedical {
     private String diagnostic;
     private LocalDate dateCreation;
 
-    @OneToMany(mappedBy = "dossierMedical")
+    @OneToMany(mappedBy = "dossierMedical", cascade = CascadeType.ALL)
     private List<RendezVous> rendezVousList;
 }
