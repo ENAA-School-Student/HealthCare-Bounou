@@ -18,7 +18,7 @@ import java.util.List;
 public class DossierMedical {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     private String diagnostic;
     private LocalDate dateCreation;

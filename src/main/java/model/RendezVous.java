@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class RendezVous {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     private LocalDateTime dateRendezVous;
     @Enumerated(EnumType.STRING)

@@ -17,11 +17,11 @@ import java.util.List;
 public class Medecin {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private String nom;
     private String specialite;
     private String email;
-    private String telephone;
+    private int telephone;
 
     @OneToMany(mappedBy = "medecin")
     private List<RendezVous> rendezVousList;
