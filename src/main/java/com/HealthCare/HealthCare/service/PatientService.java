@@ -1,11 +1,11 @@
-package service;
+package com.HealthCare.HealthCare.service;
 
-import dto.PatientDto;
+import com.HealthCare.HealthCare.dto.PatientDto;
 import lombok.RequiredArgsConstructor;
-import mapper.PatientMapper;
-import model.Patient;
+import com.HealthCare.HealthCare.mapper.PatientMapper;
+import com.HealthCare.HealthCare.model.Patient;
 import org.springframework.stereotype.Service;
-import repository.PatientRepository;
+import com.HealthCare.HealthCare.repository.PatientRepository;
 
 import java.util.List;
 
@@ -18,14 +18,14 @@ public class PatientService {
     public List<PatientDto> getAllPatients(){
         List<Patient> patients = patientRepository.getAll();
         return patients.stream()
-                .map(patientMapper::toDo)
+                .map(patientMapper::toDto)
                 .toList();
     }
 
     public PatientDto createPatient(PatientDto patientDto){
         Patient patient = patientMapper.toEntity(patientDto);
         Patient savedPatient = patientRepository.save(patient);
-        return patientMapper.toDo(savedPatient);
+        return patientMapper.toDto(savedPatient);
     }
 
     public PatientDto modifyPatient(PatientDto patientDto){
@@ -33,11 +33,10 @@ public class PatientService {
             throw new RuntimeException("Patient non trouvable");
         }
         Patient saved = patientRepository.save(patientMapper.toEntity(patientDto));
-        return patientMapper.toDo(saved);
+        return patientMapper.toDto(saved);
     }
 
-    public String deleteById(Long id)
-    {
+    public String deleteById(Long id) {
         if (!patientRepository.existsById(id)){
             throw new RuntimeException("Patient non trouvable");
         }
@@ -48,6 +47,6 @@ public class PatientService {
 
     public PatientDto getById(long id){
         Patient  patient = patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Patient non trouvable"));
-        return patientMapper.toDo(patient);
+        return patientMapper.toDto(patient);
     }
 }

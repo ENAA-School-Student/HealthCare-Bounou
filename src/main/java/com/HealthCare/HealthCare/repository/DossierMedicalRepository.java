@@ -1,6 +1,6 @@
-package repository;
+package com.HealthCare.HealthCare.repository;
 
-import model.DossierMedical;
+import com.HealthCare.HealthCare.model.DossierMedical;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DossierMedicalRepository extends JpaRepository<DossierMedical, Long> {

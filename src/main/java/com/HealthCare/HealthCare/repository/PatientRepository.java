@@ -1,6 +1,6 @@
-package repository;
+package com.HealthCare.HealthCare.repository;
 
-import model.Patient;
+import com.HealthCare.HealthCare.model.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

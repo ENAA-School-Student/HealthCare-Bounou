@@ -1,4 +1,4 @@
-package model;
+package com.HealthCare.HealthCare.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

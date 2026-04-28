@@ -1,11 +1,11 @@
-package service;
+package com.HealthCare.HealthCare.service;
 
-import dto.MedecinDto;
+import com.HealthCare.HealthCare.dto.MedecinDto;
 import lombok.RequiredArgsConstructor;
-import mapper.MedecinMapper;
-import model.Medecin;
+import com.HealthCare.HealthCare.mapper.MedecinMapper;
+import com.HealthCare.HealthCare.model.Medecin;
 import org.springframework.stereotype.Service;
-import repository.MedecinRepository;
+import com.HealthCare.HealthCare.repository.MedecinRepository;
 
 import java.util.List;
 
@@ -25,19 +25,24 @@ public class MedecinService {
 
     public MedecinDto getById(long id){
         Medecin medecin = medecinRepository.findById(id).orElseThrow(() -> new RuntimeException("Medecin non trouvable"));
-        return medecinMapper.toDo(medecin);
+        return medecinMapper.toDto(medecin);
     }
 
     public List<MedecinDto> getAll(){
         List<Medecin> medecins = medecinRepository.findAll();
-        return medecins.stream().map(medecinMapper::toDo).toList();
+        return medecins.stream().map(medecinMapper::toDto).toList();
     }
 
     public MedecinDto addMedecin(MedecinDto medecinDto)
     {
         Medecin medecin = medecinMapper.toEntity(medecinDto);
         Medecin savedMedecin = medecinRepository.save(medecin);
-        return medecinMapper.toDo(savedMedecin);
+        return medecinMapper.toDto(savedMedecin);
+    }
+
+    public MedecinDto update(MedecinDto medecinDto){
+        Medecin medecin = medecinRepository.save(medecinMapper.toEntity(medecinDto));
+        return medecinMapper.toDto(medecin);
     }
 
 

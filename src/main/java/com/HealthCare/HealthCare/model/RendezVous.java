@@ -1,6 +1,6 @@
-package model;
+package com.HealthCare.HealthCare.model;
 
-import enums.StatusRendezVous;
+import com.HealthCare.HealthCare.enums.StatusRendezVous;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package dto;
+package com.HealthCare.HealthCare.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;

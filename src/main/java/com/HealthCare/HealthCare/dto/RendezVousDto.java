@@ -1,6 +1,6 @@
-package dto;
+package com.HealthCare.HealthCare.dto;
 
-import enums.StatusRendezVous;
+import com.HealthCare.HealthCare.enums.StatusRendezVous;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -16,17 +16,16 @@ public class RendezVousDto {
     private LocalDateTime dateRendezVous;
 
     @NotNull(message = "Le champ 'status' est obligatoire")
-    @Pattern(regexp = "^(En_ATTENTE|TERMINE|CONFIRME|ANNULE)$", message = "Le champ 'status' doit être l'une des valeurs suivantes : En_ATTENTE, TERMINE, CONFIRME, ANNULE")
     private StatusRendezVous status;
 
     @NotNull(message = "Le champ 'patientId' est obligatoire")
-    private long patientId;
+    private Long patientId;
 
     @NotNull(message = "Le champ 'medecinId' est obligatoire")
-    private long medecinId;
+    private Long medecinId;
 
     @NotNull(message = "Le champ 'dossierMedicalId' est obligatoire")
-    private long dossierMedicalId;
+    private Long dossierMedicalId;
 
 
 }
