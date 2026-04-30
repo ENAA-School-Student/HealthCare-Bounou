@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql:latest
+    container_name: healthcare-mysql
+    environment:
+      MYSQL_DATABASE: healthcare_db
+      MYSQL_ROOT_PASSWORD: 230223
+    ports:
+      - "3307:3306"
+    volumes:
+        - mysql_data:/var/lib/mysql
+
+  backend:
+    build: .
+    container_name: healthcare-backend
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysqldb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/healthcare_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 230223
+    restart: on-failure
+
+volumes:
+    mysql_data:
