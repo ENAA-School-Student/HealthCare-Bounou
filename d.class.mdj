@@ -2235,20 +2235,6 @@
 							"enumerationLiteralCompartment": {
 								"$ref": "AAAAAAGdzkW9mR2k2y0="
 							}
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAGdz9mpw3biJjo=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"left": 960,
-							"top": 588,
-							"width": 100,
-							"height": 25,
-							"text": "Text"
 						}
 					]
 				},

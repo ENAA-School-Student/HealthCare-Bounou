@@ -24,7 +24,7 @@ public class MedecinService {
     }
 
     public MedecinDto getById(long id){
-        Medecin medecin = medecinRepository.findById(id).orElseThrow(() -> new RuntimeException("Medecin non trouvable"));
+        Medecin medecin = medecinRepository.findById(id).orElse(null);
         return medecinMapper.toDto(medecin);
     }
 
