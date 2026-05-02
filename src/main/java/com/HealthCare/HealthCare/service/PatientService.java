@@ -1,6 +1,7 @@
 package com.HealthCare.HealthCare.service;
 
 import com.HealthCare.HealthCare.dto.PatientDto;
+import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.PatientMapper;
 import com.HealthCare.HealthCare.model.Patient;
@@ -30,7 +31,7 @@ public class PatientService {
 
     public PatientDto modifyPatient(PatientDto patientDto){
         if(!patientRepository.existsById(patientDto.getId())){
-            throw new RuntimeException("Patient non trouvable");
+            throw new ResourceNotFoundException("Patient non trouvable");
         }
         Patient saved = patientRepository.save(patientMapper.toEntity(patientDto));
         return patientMapper.toDto(saved);
@@ -38,7 +39,7 @@ public class PatientService {
 
     public String deleteById(Long id) {
         if (!patientRepository.existsById(id)){
-            throw new RuntimeException("Patient non trouvable");
+            throw new ResourceNotFoundException("Patient non trouvable");
         }
 
         patientRepository.deleteById(id);
@@ -46,7 +47,7 @@ public class PatientService {
     }
 
     public PatientDto getById(long id){
-        Patient  patient = patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Patient non trouvable"));
+        Patient  patient = patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Patient non trouvable"));
         return patientMapper.toDto(patient);
     }
 }

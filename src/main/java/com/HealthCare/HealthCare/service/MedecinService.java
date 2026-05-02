@@ -1,6 +1,7 @@
 package com.HealthCare.HealthCare.service;
 
 import com.HealthCare.HealthCare.dto.MedecinDto;
+import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.MedecinMapper;
 import com.HealthCare.HealthCare.model.Medecin;
@@ -17,7 +18,7 @@ public class MedecinService {
 
     public String deleteById(long id){
         if (!medecinRepository.existsById(id)){
-            throw new RuntimeException("Medecin non trouvable");
+            throw new ResourceNotFoundException("Medecin non trouvable");
         }
         medecinRepository.deleteById(id);
         return "Medecin deleted";

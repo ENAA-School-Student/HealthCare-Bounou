@@ -11,6 +11,7 @@ import com.HealthCare.HealthCare.mapper.RendezVousMapper;
 import com.HealthCare.HealthCare.model.RendezVous;
 import org.springframework.stereotype.Service;
 import com.HealthCare.HealthCare.repository.RendezVousRepository;
+import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -25,9 +26,9 @@ public class RendezVousService {
 
     public RendezVousDto createRendezVous(RendezVousDto rendezVousDto){
         RendezVous rendezVous = rendezVousMapper.toEntity(rendezVousDto);
-        rendezVous.setPatient(patientRepository.findById(rendezVousDto.getPatientId()).orElseThrow(() -> new RuntimeException("Patient non trouvable")));
-        rendezVous.setMedecin(medecinRepository.findById(rendezVousDto.getMedecinId()).orElseThrow(()-> new RuntimeException("Medecin non trouvable")));
-        rendezVous.setDossierMedical(dossierMedicalRepository.findById(rendezVousDto.getDossierMedicalId()).orElseThrow(() -> new RuntimeException("Dossier medical non trouvable")));
+        rendezVous.setPatient(patientRepository.findById(rendezVousDto.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient non trouvable")));
+        rendezVous.setMedecin(medecinRepository.findById(rendezVousDto.getMedecinId()).orElseThrow(()-> new ResourceNotFoundException("Medecin non trouvable")));
+        rendezVous.setDossierMedical(dossierMedicalRepository.findById(rendezVousDto.getDossierMedicalId()).orElseThrow(() -> new ResourceNotFoundException("Dossier medical non trouvable")));
         RendezVous saved = rendezVousRepository.save(rendezVous);
         RendezVousDto savedDto = rendezVousMapper.toDto(saved);
         savedDto.setPatientId(saved.getPatient().getId());
@@ -37,7 +38,7 @@ public class RendezVousService {
     }
 
     public RendezVousDto getById(long id){
-        RendezVous rendezVous = rendezVousRepository.findById(id).orElseThrow(() -> new RuntimeException("Rendez vous non trouvable"));
+        RendezVous rendezVous = rendezVousRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rendez vous non trouvable"));
         RendezVousDto rendezVousDto = rendezVousMapper.toDto(rendezVous);
         rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
         rendezVousDto.setPatientId(rendezVous.getPatient().getId());
@@ -62,9 +63,9 @@ public class RendezVousService {
         }
         RendezVous rendezVous1 = rendezVousMapper.toEntity(rendezVousDto);
 
-        rendezVous1.setPatient(patientRepository.findById(rendezVousDto.getPatientId()).orElseThrow(() -> new RuntimeException("Patient non trouvable")));
-        rendezVous1.setMedecin(medecinRepository.findById(rendezVousDto.getMedecinId()).orElseThrow(()-> new RuntimeException("Medecin non trouvable")));
-        rendezVous1.setDossierMedical(dossierMedicalRepository.findById(rendezVousDto.getDossierMedicalId()).orElseThrow(() -> new RuntimeException("Dossier medical non trouvable")));
+        rendezVous1.setPatient(patientRepository.findById(rendezVousDto.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient non trouvable")));
+        rendezVous1.setMedecin(medecinRepository.findById(rendezVousDto.getMedecinId()).orElseThrow(()-> new ResourceNotFoundException("Medecin non trouvable")));
+        rendezVous1.setDossierMedical(dossierMedicalRepository.findById(rendezVousDto.getDossierMedicalId()).orElseThrow(() -> new ResourceNotFoundException("Dossier medical non trouvable")));
 
         RendezVous rendezVous = rendezVousRepository.save(rendezVous1);
 
@@ -78,7 +79,7 @@ public class RendezVousService {
     }
 
     public RendezVousDto annulerRdv(long id){
-        RendezVous rendezVous = rendezVousRepository.findById(id).orElseThrow(() -> new RuntimeException("Rendez vous non trouvable"));
+        RendezVous rendezVous = rendezVousRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rendez vous non trouvable"));
         rendezVous.setStatus(StatusRendezVous.ANNULE);
         RendezVousDto rendezVousDto = rendezVousMapper.toDto(rendezVousRepository.save(rendezVous));
         rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
