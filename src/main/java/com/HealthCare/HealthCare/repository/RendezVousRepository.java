@@ -11,14 +11,8 @@ public interface RendezVousRepository extends JpaRepository<RendezVous, Long> {
     @Query("select r from RendezVous r where r.patient.nom like %:nom%")
     public List<RendezVous> findAllLikePation(@Param("nom") String nom);
 
-    @Query("select r from RendezVous r where r.patient.nom = :nom")
-    public List<RendezVous> findAllByPatient(@Param("nom") String nom);
-
     @Query("select r from RendezVous r where r.medecin.nom LIKE %:nom%")
     public List<RendezVous> findAllLikeMedecin(@Param("nom") String nom);
-
-    @Query("select r from RendezVous r where r.medecin.nom = :nom")
-    public List<RendezVous> findAllByMedecin(@Param("nom") String nom);
 
     @Query("select r from RendezVous r where r.patient.id = :id")
     public List<RendezVous> findByPatientId(@Param("id") long id);
