@@ -1,0 +1,1 @@
+alter table rendez_vous modify dossier_medical_id bigint null;

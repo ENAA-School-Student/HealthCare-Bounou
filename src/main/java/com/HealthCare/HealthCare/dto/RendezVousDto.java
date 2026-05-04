@@ -24,7 +24,6 @@ public class RendezVousDto {
     @NotNull(message = "Le champ 'medecinId' est obligatoire")
     private Long medecinId;
 
-    @NotNull(message = "Le champ 'dossierMedicalId' est obligatoire")
     private Long dossierMedicalId;
 
 

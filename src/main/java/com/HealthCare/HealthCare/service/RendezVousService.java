@@ -1,6 +1,7 @@
 
 package com.HealthCare.HealthCare.service;
 
+import com.HealthCare.HealthCare.dto.DossierMedicalDto;
 import com.HealthCare.HealthCare.dto.RendezVousDto;
 import com.HealthCare.HealthCare.enums.StatusRendezVous;
 import com.HealthCare.HealthCare.repository.DossierMedicalRepository;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import com.HealthCare.HealthCare.repository.RendezVousRepository;
 import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,17 +26,24 @@ public class RendezVousService {
     private final PatientRepository patientRepository;
     private final MedecinRepository medecinRepository;
     private final DossierMedicalRepository dossierMedicalRepository;
+    private final DossierMedicalService dossierMedicalService;
 
     public RendezVousDto createRendezVous(RendezVousDto rendezVousDto){
         RendezVous rendezVous = rendezVousMapper.toEntity(rendezVousDto);
         rendezVous.setPatient(patientRepository.findById(rendezVousDto.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient non trouvable")));
         rendezVous.setMedecin(medecinRepository.findById(rendezVousDto.getMedecinId()).orElseThrow(()-> new ResourceNotFoundException("Medecin non trouvable")));
-        rendezVous.setDossierMedical(dossierMedicalRepository.findById(rendezVousDto.getDossierMedicalId()).orElseThrow(() -> new ResourceNotFoundException("Dossier medical non trouvable")));
+        if (rendezVousDto.getDossierMedicalId() != null){
+            rendezVous.setDossierMedical(dossierMedicalRepository.findById(rendezVousDto.getDossierMedicalId()).orElseThrow(() -> new ResourceNotFoundException("Dossier medical non trouvable")));
+        }else {
+            rendezVous.setDossierMedical(null);
+        }
         RendezVous saved = rendezVousRepository.save(rendezVous);
         RendezVousDto savedDto = rendezVousMapper.toDto(saved);
         savedDto.setPatientId(saved.getPatient().getId());
         savedDto.setMedecinId(saved.getMedecin().getId());
-        savedDto.setDossierMedicalId(saved.getDossierMedical().getId());
+        if (saved.getDossierMedical() != null){
+            savedDto.setDossierMedicalId(saved.getDossierMedical().getId());
+        }
         return savedDto;
     }
 
@@ -42,7 +52,9 @@ public class RendezVousService {
         RendezVousDto rendezVousDto = rendezVousMapper.toDto(rendezVous);
         rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
         rendezVousDto.setPatientId(rendezVous.getPatient().getId());
-        rendezVousDto.setDossierMedicalId(rendezVous.getDossierMedical().getId());
+        if (rendezVous.getDossierMedical() != null){
+            rendezVousDto.setDossierMedicalId(rendezVous.getDossierMedical().getId());
+        }
         return rendezVousDto;
     }
 
@@ -52,7 +64,9 @@ public class RendezVousService {
         for (int i = 0; i < rendezVous.size(); i++) {
             rendezVousDtos.get(i).setMedecinId(rendezVous.get(i).getMedecin().getId());
             rendezVousDtos.get(i).setPatientId(rendezVous.get(i).getPatient().getId());
-            rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            if (rendezVous.get(i).getDossierMedical() != null){
+                rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            }
         }
         return rendezVousDtos;
     }
@@ -73,8 +87,9 @@ public class RendezVousService {
 
         rendezVousDto1.setMedecinId(rendezVous.getMedecin().getId());
         rendezVousDto1.setPatientId(rendezVous.getPatient().getId());
-        rendezVousDto1.setDossierMedicalId(rendezVous.getDossierMedical().getId());
-
+        if (rendezVous.getDossierMedical() != null){
+            rendezVousDto1.setDossierMedicalId(rendezVous.getDossierMedical().getId());
+        }
         return rendezVousDto1;
     }
 
@@ -84,7 +99,32 @@ public class RendezVousService {
         RendezVousDto rendezVousDto = rendezVousMapper.toDto(rendezVousRepository.save(rendezVous));
         rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
         rendezVousDto.setPatientId(rendezVous.getPatient().getId());
-        rendezVousDto.setDossierMedicalId(rendezVous.getDossierMedical().getId());
+        if (rendezVous.getDossierMedical() != null){
+            rendezVousDto.setDossierMedicalId(rendezVous.getDossierMedical().getId());
+        }
+        return rendezVousDto;
+    }
+
+    public RendezVousDto confirmeRdv(long id){
+        RendezVous rendezVous = rendezVousRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rendez vous non trouvable"));
+        rendezVous.setStatus(StatusRendezVous.CONFIRME);
+        RendezVousDto rendezVousDto = rendezVousMapper.toDto(rendezVousRepository.save(rendezVous));
+        if (rendezVous.getDossierMedical() != null){
+            rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
+            rendezVousDto.setPatientId(rendezVous.getPatient().getId());
+            rendezVousDto.setDossierMedicalId(rendezVous.getDossierMedical().getId());
+        }else {
+            rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
+            rendezVousDto.setPatientId(rendezVous.getPatient().getId());
+
+            DossierMedicalDto dossierMedicalDto1 = new DossierMedicalDto();
+            dossierMedicalDto1.setPatientId(rendezVousDto.getPatientId());
+            dossierMedicalDto1.setMedecinId(rendezVousDto.getMedecinId());
+            dossierMedicalDto1.setDateCreation(LocalDate.now());
+            DossierMedicalDto saved = dossierMedicalService.createDossierMedical(dossierMedicalDto1);
+            rendezVousDto.setDossierMedicalId(saved.getId());
+        }
+
         return rendezVousDto;
     }
 
@@ -97,7 +137,9 @@ public class RendezVousService {
         for (int i = 0; i < rendezVous.size(); i++) {
             rendezVousDtos.get(i).setMedecinId(rendezVous.get(i).getMedecin().getId());
             rendezVousDtos.get(i).setPatientId(rendezVous.get(i).getPatient().getId());
-            rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            if (rendezVous.get(i).getDossierMedical() != null){
+                rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            }
         }
         return rendezVousDtos;
     }
@@ -111,7 +153,9 @@ public class RendezVousService {
         for (int i = 0; i < rendezVous.size(); i++) {
             rendezVousDtos.get(i).setMedecinId(rendezVous.get(i).getMedecin().getId());
             rendezVousDtos.get(i).setPatientId(rendezVous.get(i).getPatient().getId());
-            rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            if (rendezVous.get(i).getDossierMedical() != null){
+                rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            }
         }
         return rendezVousDtos;
     }
@@ -125,7 +169,9 @@ public class RendezVousService {
         for (int i = 0; i < rendezVous.size(); i++) {
             rendezVousDtos.get(i).setMedecinId(rendezVous.get(i).getMedecin().getId());
             rendezVousDtos.get(i).setPatientId(rendezVous.get(i).getPatient().getId());
-            rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            if (rendezVous.get(i).getDossierMedical() != null){
+                rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            }
         }
         return rendezVousDtos;
     }
@@ -139,7 +185,9 @@ public class RendezVousService {
         for (int i = 0; i < rendezVous.size(); i++) {
             rendezVousDtos.get(i).setMedecinId(rendezVous.get(i).getMedecin().getId());
             rendezVousDtos.get(i).setPatientId(rendezVous.get(i).getPatient().getId());
-            rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            if (rendezVous.get(i).getDossierMedical() != null){
+                rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
+            }
         }
         return rendezVousDtos;
     }

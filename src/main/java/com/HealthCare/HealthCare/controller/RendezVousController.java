@@ -42,6 +42,11 @@ public class RendezVousController {
         return ResponseEntity.ok(rendezVousService.annulerRdv(id));
     }
 
+    @PutMapping("/{id}/confirmer")
+    public ResponseEntity<RendezVousDto> cinfirmerRdv(@PathVariable long id){
+        return ResponseEntity.ok(rendezVousService.confirmeRdv(id));
+    }
+
     @GetMapping("/all/medecin/{nom}")
     public ResponseEntity<List<RendezVousDto>> getAllLikeMedecin(@Valid @PathVariable String nom){
         return ResponseEntity.ok(rendezVousService.getAllLikeMedecin(nom));
