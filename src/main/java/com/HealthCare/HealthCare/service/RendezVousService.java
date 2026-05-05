@@ -4,6 +4,7 @@ package com.HealthCare.HealthCare.service;
 import com.HealthCare.HealthCare.dto.DossierMedicalDto;
 import com.HealthCare.HealthCare.dto.RendezVousDto;
 import com.HealthCare.HealthCare.enums.StatusRendezVous;
+import com.HealthCare.HealthCare.mapper.DossierMedicalMapper;
 import com.HealthCare.HealthCare.repository.DossierMedicalRepository;
 import com.HealthCare.HealthCare.repository.MedecinRepository;
 import com.HealthCare.HealthCare.repository.PatientRepository;
@@ -27,6 +28,7 @@ public class RendezVousService {
     private final MedecinRepository medecinRepository;
     private final DossierMedicalRepository dossierMedicalRepository;
     private final DossierMedicalService dossierMedicalService;
+    private final DossierMedicalMapper dossierMedicalMapper;
 
     public RendezVousDto createRendezVous(RendezVousDto rendezVousDto){
         RendezVous rendezVous = rendezVousMapper.toEntity(rendezVousDto);
@@ -54,6 +56,8 @@ public class RendezVousService {
         rendezVousDto.setPatientId(rendezVous.getPatient().getId());
         if (rendezVous.getDossierMedical() != null){
             rendezVousDto.setDossierMedicalId(rendezVous.getDossierMedical().getId());
+        }else{
+            rendezVousDto.setDossierMedicalId(1L);
         }
         return rendezVousDto;
     }
@@ -108,23 +112,24 @@ public class RendezVousService {
     public RendezVousDto confirmeRdv(long id){
         RendezVous rendezVous = rendezVousRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rendez vous non trouvable"));
         rendezVous.setStatus(StatusRendezVous.CONFIRME);
-        RendezVousDto rendezVousDto = rendezVousMapper.toDto(rendezVousRepository.save(rendezVous));
+        RendezVousDto rendezVousDto;
         if (rendezVous.getDossierMedical() != null){
+            rendezVousDto = rendezVousMapper.toDto(rendezVousRepository.save(rendezVous));
             rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
             rendezVousDto.setPatientId(rendezVous.getPatient().getId());
             rendezVousDto.setDossierMedicalId(rendezVous.getDossierMedical().getId());
         }else {
-            rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
-            rendezVousDto.setPatientId(rendezVous.getPatient().getId());
-
             DossierMedicalDto dossierMedicalDto1 = new DossierMedicalDto();
-            dossierMedicalDto1.setPatientId(rendezVousDto.getPatientId());
-            dossierMedicalDto1.setMedecinId(rendezVousDto.getMedecinId());
+            dossierMedicalDto1.setPatientId(rendezVous.getPatient().getId());
+            dossierMedicalDto1.setMedecinId(rendezVous.getMedecin().getId());
             dossierMedicalDto1.setDateCreation(LocalDate.now());
             DossierMedicalDto saved = dossierMedicalService.createDossierMedical(dossierMedicalDto1);
+            rendezVous.setDossierMedical(dossierMedicalMapper.toEntity(saved));
+            rendezVousDto = rendezVousMapper.toDto(rendezVousRepository.save(rendezVous));
             rendezVousDto.setDossierMedicalId(saved.getId());
+            rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
+            rendezVousDto.setPatientId(rendezVous.getPatient().getId());
         }
-
         return rendezVousDto;
     }
 
