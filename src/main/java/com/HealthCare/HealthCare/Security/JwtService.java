@@ -1,6 +1,7 @@
 package com.HealthCare.HealthCare.Security;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,8 @@ public class JwtService {
     private long expiration;
 
     private SecretKey getSigninSecretKey(){
-        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(UserDetails userDetails){
@@ -44,9 +46,5 @@ public class JwtService {
         final String username = extractUserName(token);
         return username.equals(userDetails.getUsername());
     }
-
-
-
-
 
 }
