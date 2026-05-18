@@ -6,6 +6,7 @@ import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 import com.HealthCare.HealthCare.mapper.UserMapper;
 import com.HealthCare.HealthCare.model.User;
 import com.HealthCare.HealthCare.repository.UserRepository;
+import com.HealthCare.HealthCare.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,46 +27,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserDto userDto){
-        log.info("Registering user with email: {}", userDto.getEmail());
-        if (userRepository.existsByEmail(userDto.getEmail())){
-            return ResponseEntity.badRequest().body("Email already used");
-        }
-        if (userDto.getRole() == null){
-            userDto.setRole("ROLE_PATIENT");
-        }
-        User user = new User();
-        user.setEmail(userDto.getEmail());
-        user.setRole(userDto.getRole());
-        user.setUsername(userDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userRepository.save(user);
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.ok(authService.register(userDto));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserDto userDto){
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userDto.getUsername() , userDto.getPassword())
-        );
-
-        var user = userRepository.findByUsername(userDto.getUsername()).orElseThrow(()-> new ResourceNotFoundException("Credentials incorrect"));
-
-        String token = jwtService.generateToken(
-                new org.springframework.security.core.userdetails.User(
-                        user.getUsername(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority(user.getRole()))
-                )
-        );
-
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(authService.login(userDto));
     }
-
 }

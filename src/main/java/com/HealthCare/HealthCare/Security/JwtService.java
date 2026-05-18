@@ -25,10 +25,10 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails){
+    public String generateToken(String userName){
         return Jwts.builder()
                 .issuedAt(new Date())
-                .subject(userDetails.getUsername())
+                .subject(userName)
                 .expiration(new Date(new Date().getTime() + expiration))
                 .signWith(getSigninSecretKey())
                 .compact();
