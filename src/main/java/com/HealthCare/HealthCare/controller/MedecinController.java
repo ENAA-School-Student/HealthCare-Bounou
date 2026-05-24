@@ -4,6 +4,7 @@ import com.HealthCare.HealthCare.dto.MedecinDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.MedecinMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,22 @@ public class MedecinController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<MedecinDto>> getAll(){
-        return ResponseEntity.ok(medecinService.getAll());
+    public ResponseEntity<Page<MedecinDto>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ){
+        return ResponseEntity.ok(medecinService.getAll(page,size,sortBy,sortDir));
+    }
+
+    @GetMapping("/search/specialite/{specialite}")
+    public ResponseEntity<Page<MedecinDto>> getBySpecialite(
+            @Valid @PathVariable String specialite,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ){
+        return ResponseEntity.ok(medecinService.getMedecinBySpecialite(specialite,page,size));
     }
 
     @PostMapping("/create")

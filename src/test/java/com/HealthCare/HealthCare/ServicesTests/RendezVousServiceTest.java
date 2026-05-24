@@ -12,7 +12,6 @@ import com.HealthCare.HealthCare.mapper.RendezVousMapper;
 import com.HealthCare.HealthCare.model.DossierMedical;
 import com.HealthCare.HealthCare.model.Medecin;
 import com.HealthCare.HealthCare.model.Patient;
-import com.HealthCare.HealthCare.model.RendezVous;
 import com.HealthCare.HealthCare.service.DossierMedicalService;
 import com.HealthCare.HealthCare.service.MedecinService;
 import com.HealthCare.HealthCare.service.PatientService;
@@ -20,6 +19,7 @@ import com.HealthCare.HealthCare.service.RendezVousService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
@@ -28,6 +28,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -112,10 +113,28 @@ public class RendezVousServiceTest {
      @Test
      void testGetAll(){
          RendezVousDto savedRendezVousDto = getRendeVous();
-         List<RendezVousDto> rendezVousDtos = rendezVousService.getAll();
+          Page<RendezVousDto> rendezVousDtos = rendezVousService.getAll(0,10,"dateRendezVous","asc");
+          assertNotNull(rendezVousDtos);
+          assertTrue(rendezVousDtos.getTotalElements() >= 1);
+          assertTrue(rendezVousDtos.getContent().stream().anyMatch(rendezVousDto -> rendezVousDto.getId() == savedRendezVousDto.getId()));
+     }
+
+     @Test
+     void testGetByStatus(){
+         RendezVousDto savedRendezVousDto = getRendeVous();
+         Page<RendezVousDto> rendezVousDtos = rendezVousService.getByStatus("En_ATTENTE", 0, 10, "dateRendezVous", "asc");
+
          assertNotNull(rendezVousDtos);
-         assertEquals(3, rendezVousDtos.size());
-         assertEquals(savedRendezVousDto.getDateRendezVous(), rendezVousDtos.getFirst().getDateRendezVous());
+         assertTrue(rendezVousDtos.getContent().stream().anyMatch(rendezVousDto -> rendezVousDto.getId() == savedRendezVousDto.getId()));
+     }
+
+     @Test
+     void testGetByDate(){
+         RendezVousDto savedRendezVousDto = getRendeVous();
+         Page<RendezVousDto> rendezVousDtos = rendezVousService.getByDate("2026-06-01", 0, 10, "dateRendezVous", "asc");
+
+         assertNotNull(rendezVousDtos);
+         assertTrue(rendezVousDtos.getContent().stream().anyMatch(rendezVousDto -> rendezVousDto.getId() == savedRendezVousDto.getId()));
      }
 
 

@@ -5,6 +5,10 @@ import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.MedecinMapper;
 import com.HealthCare.HealthCare.model.Medecin;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.HealthCare.HealthCare.repository.MedecinRepository;
 
@@ -29,9 +33,15 @@ public class MedecinService {
         return medecinMapper.toDto(medecin);
     }
 
-    public List<MedecinDto> getAll(){
-        List<Medecin> medecins = medecinRepository.findAll();
-        return medecins.stream().map(medecinMapper::toDto).toList();
+    public Page<MedecinDto> getAll(int page , int size , String orderBy , String orderDir){
+        Sort sort = orderDir.equalsIgnoreCase("desc") ? Sort.by(orderBy).descending() : Sort.by(orderBy).ascending();
+        Pageable pageable = PageRequest.of(page,size,sort);
+        return medecinRepository.findAll(pageable).map(medecinMapper::toDto);
+    }
+
+    public Page<MedecinDto> getMedecinBySpecialite(String specialite , int page  , int size ){
+        Pageable pageable = PageRequest.of(page,size);
+        return medecinRepository.findBySpecialite(specialite,pageable).map(medecinMapper::toDto);
     }
 
     public MedecinDto addMedecin(MedecinDto medecinDto)

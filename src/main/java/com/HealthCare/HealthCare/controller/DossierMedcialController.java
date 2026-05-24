@@ -20,6 +20,14 @@ public class DossierMedcialController {
         return ResponseEntity.ok(dossierMedicalService.getById(id));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "10") int size,
+                                    @RequestParam(defaultValue = "id") String orderBy,
+                                    @RequestParam(defaultValue = "asc") String orderDir) {
+        return ResponseEntity.ok(dossierMedicalService.getAll(page, size, orderBy, orderDir));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<DossierMedicalDto> post(@RequestBody DossierMedicalDto dossierMedicalDto) {
         return ResponseEntity.ok(dossierMedicalService.createDossierMedical(dossierMedicalDto));
