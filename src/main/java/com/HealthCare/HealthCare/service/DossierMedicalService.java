@@ -5,6 +5,10 @@ import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.DossierMedicalMapper;
 import com.HealthCare.HealthCare.model.DossierMedical;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.HealthCare.HealthCare.repository.DossierMedicalRepository;
 
@@ -22,6 +26,12 @@ public class DossierMedicalService {
         }
         DossierMedical dossierMedical = dossierMedicalRepository.save(dossierMedicalMapper.toEntity(dossierMedicalDto));
         return dossierMedicalMapper.toDto(dossierMedical);
+    }
+
+    public Page<DossierMedicalDto> getAll(int page , int size , String orderBy , String orderDir){
+        Sort sort = orderDir.equalsIgnoreCase("desc") ? Sort.by(orderBy).descending() : Sort.by(orderBy).ascending();
+        Pageable pageable = PageRequest.of(page,size,sort);
+        return dossierMedicalRepository.findAll(pageable).map(dossierMedicalMapper::toDto);
     }
 
     public DossierMedicalDto getById(long id){

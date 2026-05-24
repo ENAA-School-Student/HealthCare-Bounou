@@ -30,6 +30,10 @@ public class AuthService {
         user.setUsername(req.getUsername());
         user.setEmail(req.getEmail());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
+        if (req.getRole() == null){
+            user.setRole("ROLE_PATIENT");
+        }
+        user.setRole("ROLE_" + req.getRole());
         userRepository.save(user);
 
         return jwtService.generateToken(user.getUsername());

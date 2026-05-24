@@ -11,12 +11,15 @@ import com.HealthCare.HealthCare.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.RendezVousMapper;
 import com.HealthCare.HealthCare.model.RendezVous;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.HealthCare.HealthCare.repository.RendezVousRepository;
 import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,6 +32,31 @@ public class RendezVousService {
     private final DossierMedicalRepository dossierMedicalRepository;
     private final DossierMedicalService dossierMedicalService;
     private final DossierMedicalMapper dossierMedicalMapper;
+
+    private Pageable buildPageable(int page, int size, String orderBy, String orderDir) {
+        Sort sort = orderDir.equalsIgnoreCase("desc")
+                ? Sort.by(orderBy).descending()
+                : Sort.by(orderBy).ascending();
+        return PageRequest.of(page, size, sort);
+    }
+
+    private RendezVousDto toDtoWithRelations(RendezVous rendezVous) {
+        RendezVousDto rendezVousDto = rendezVousMapper.toDto(rendezVous);
+        rendezVousDto.setMedecinId(rendezVous.getMedecin().getId());
+        rendezVousDto.setPatientId(rendezVous.getPatient().getId());
+        if (rendezVous.getDossierMedical() != null) {
+            rendezVousDto.setDossierMedicalId(rendezVous.getDossierMedical().getId());
+        }
+        return rendezVousDto;
+    }
+
+    private StatusRendezVous parseStatus(String status) {
+        String normalized = status.trim();
+        return List.of(StatusRendezVous.values()).stream()
+                .filter(value -> value.name().equalsIgnoreCase(normalized))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Statut de rendez-vous invalide : " + status));
+    }
 
     public RendezVousDto createRendezVous(RendezVousDto rendezVousDto){
         RendezVous rendezVous = rendezVousMapper.toEntity(rendezVousDto);
@@ -62,17 +90,23 @@ public class RendezVousService {
         return rendezVousDto;
     }
 
-    public List<RendezVousDto> getAll(){
-        List<RendezVous> rendezVous = rendezVousRepository.findAll();
-        List<RendezVousDto> rendezVousDtos = rendezVous.stream().map(rendezVousMapper::toDto).toList();
-        for (int i = 0; i < rendezVous.size(); i++) {
-            rendezVousDtos.get(i).setMedecinId(rendezVous.get(i).getMedecin().getId());
-            rendezVousDtos.get(i).setPatientId(rendezVous.get(i).getPatient().getId());
-            if (rendezVous.get(i).getDossierMedical() != null){
-                rendezVousDtos.get(i).setDossierMedicalId(rendezVous.get(i).getDossierMedical().getId());
-            }
-        }
-        return rendezVousDtos;
+    public Page<RendezVousDto> getAll(int page , int size , String orderBy , String orderDir){
+        Pageable pageable = buildPageable(page, size, orderBy, orderDir);
+        return rendezVousRepository.findAll(pageable)
+                .map(this::toDtoWithRelations);
+    }
+
+    public Page<RendezVousDto> getByDate(String date , int page , int size , String orderBy , String orderDir){
+        LocalDate parsedDate = LocalDate.parse(date);
+        Pageable pageable = buildPageable(page, size, orderBy, orderDir);
+        return rendezVousRepository.findByDateBetween(parsedDate.atStartOfDay(), parsedDate.plusDays(1).atStartOfDay(), pageable)
+                .map(this::toDtoWithRelations);
+    }
+
+    public Page<RendezVousDto> getByStatus(String status , int page , int size , String orderBy , String orderDir){
+        Pageable pageable = buildPageable(page, size, orderBy, orderDir);
+        return rendezVousRepository.findByStatus(parseStatus(status), pageable)
+                .map(this::toDtoWithRelations);
     }
 
     public RendezVousDto modify(RendezVousDto rendezVousDto){

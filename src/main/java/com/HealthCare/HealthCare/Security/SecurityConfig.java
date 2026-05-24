@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                     auth.requestMatchers("/api/auth/**" , "/V3/api-docs/**" ,  "/swagger-ui/**").permitAll()
                             .requestMatchers("/medecin/**").hasAnyRole("ADMIN", "MEDECIN")
-                            .requestMatchers("/patient/**").hasAnyRole("ADMIN", "PATIENT", "MEDECIN")
+                            .requestMatchers("/patient/**").hasAnyRole("ADMIN", "MEDECIN", "PATIENT")
                             .requestMatchers("/dossier-medical/**").hasAnyRole("ADMIN", "MEDECIN")
                             .requestMatchers("/rendez-vous/**").authenticated()
                             .anyRequest().authenticated()

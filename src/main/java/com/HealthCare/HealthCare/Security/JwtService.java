@@ -1,8 +1,11 @@
 package com.HealthCare.HealthCare.Security;
 
+import com.HealthCare.HealthCare.model.User;
+import com.HealthCare.HealthCare.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ public class JwtService {
 
     @Value("${jwt.expiration}")
     private long expiration;
+    @Autowired
+    private UserRepository userRepository;
 
     private SecretKey getSigninSecretKey(){
         byte[] keyBytes = Decoders.BASE64.decode(secret);
@@ -26,9 +31,11 @@ public class JwtService {
     }
 
     public String generateToken(String userName){
+        User user = userRepository.findByUsername(userName).orElseThrow(() -> new RuntimeException("User not found"));
         return Jwts.builder()
                 .issuedAt(new Date())
                 .subject(userName)
+                .claim("role", user.getRole())
                 .expiration(new Date(new Date().getTime() + expiration))
                 .signWith(getSigninSecretKey())
                 .compact();

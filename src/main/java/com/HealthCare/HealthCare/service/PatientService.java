@@ -2,9 +2,14 @@ package com.HealthCare.HealthCare.service;
 
 import com.HealthCare.HealthCare.dto.PatientDto;
 import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.PatientMapper;
 import com.HealthCare.HealthCare.model.Patient;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.HealthCare.HealthCare.repository.PatientRepository;
 
@@ -16,11 +21,14 @@ public class PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
 
-    public List<PatientDto> getAllPatients(){
-        List<Patient> patients = patientRepository.getAll();
-        return patients.stream()
-                .map(patientMapper::toDto)
-                .toList();
+    public Page<PatientDto> getAllPatients(int page , int size , String orderBy , String orderDir){
+
+        Sort sort = orderDir.equalsIgnoreCase("desc")
+                ? Sort.by(orderBy).descending()
+                : Sort.by(orderBy).ascending();
+
+        Pageable pageable = PageRequest.of(page ,size ,sort);
+        return patientRepository.findAll(pageable).map(patientMapper::toDto);
     }
 
     public PatientDto createPatient(PatientDto patientDto){
@@ -49,5 +57,10 @@ public class PatientService {
     public PatientDto getById(long id){
         Patient  patient = patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Patient non trouvable"));
         return patientMapper.toDto(patient);
+    }
+
+    public Page<PatientDto> getByName(@Valid String name, int page , int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return patientRepository.findByNomLike(name , pageable).map(patientMapper::toDto);
     }
 }
