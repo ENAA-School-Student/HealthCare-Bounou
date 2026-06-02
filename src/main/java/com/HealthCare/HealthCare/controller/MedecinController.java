@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.MedecinMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ public class MedecinController {
     private final MedecinMapper medecinMapper;
 
     @GetMapping("/{id}")
-    public ResponseEntity<MedecinDto> getById(@Valid @Param("id") long id){
+    public ResponseEntity<MedecinDto> getById(@PathVariable long id){
         return ResponseEntity.ok(medecinService.getById(id));
     }
 

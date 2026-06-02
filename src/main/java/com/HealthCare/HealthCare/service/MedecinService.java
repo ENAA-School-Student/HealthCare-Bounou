@@ -29,7 +29,8 @@ public class MedecinService {
     }
 
     public MedecinDto getById(long id){
-        Medecin medecin = medecinRepository.findById(id).orElse(null);
+        Medecin medecin = medecinRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Medecin non trouvable"));
         return medecinMapper.toDto(medecin);
     }
 
