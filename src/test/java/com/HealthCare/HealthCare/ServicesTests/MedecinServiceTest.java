@@ -1,6 +1,7 @@
 package com.HealthCare.HealthCare.ServicesTests;
 
 import com.HealthCare.HealthCare.dto.MedecinDto;
+import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 import com.HealthCare.HealthCare.mapper.MedecinMapper;
 import com.HealthCare.HealthCare.model.Medecin;
 import com.HealthCare.HealthCare.service.MedecinService;
@@ -46,10 +47,10 @@ public class MedecinServiceTest {
         medecin.setRendezVousList(List.of());
 
         MedecinDto savedMedecinDto = medecinService.addMedecin(medecinMapper.toDto(medecin));
-        medecinService.deleteById(savedMedecinDto.getId());
+        long deletedId = savedMedecinDto.getId();
+        medecinService.deleteById(deletedId);
 
-        MedecinDto deletedMedecin = medecinService.getById(savedMedecinDto.getId());
-        assertNull(deletedMedecin);
+        assertThrows(ResourceNotFoundException.class, () -> medecinService.getById(deletedId));
     }
 
 }
