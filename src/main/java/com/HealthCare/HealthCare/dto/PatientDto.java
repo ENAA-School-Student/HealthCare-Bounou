@@ -3,10 +3,11 @@ package com.HealthCare.HealthCare.dto;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
-public class PatientDto {
+public class PatientDto implements Serializable {
     private long id;
     @NotNull(message = "Le champ 'nom' est obligatoire")
     private String nom;

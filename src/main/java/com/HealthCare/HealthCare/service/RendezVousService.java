@@ -1,4 +1,3 @@
-
 package com.HealthCare.HealthCare.service;
 
 import com.HealthCare.HealthCare.dto.DossierMedicalDto;
@@ -11,6 +10,8 @@ import com.HealthCare.HealthCare.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.RendezVousMapper;
 import com.HealthCare.HealthCare.model.RendezVous;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -58,6 +59,7 @@ public class RendezVousService {
                 .orElseThrow(() -> new IllegalArgumentException("Statut de rendez-vous invalide : " + status));
     }
 
+    @CacheEvict(value = "rendezvous", allEntries = true)
     public RendezVousDto createRendezVous(RendezVousDto rendezVousDto){
         RendezVous rendezVous = rendezVousMapper.toEntity(rendezVousDto);
         rendezVous.setPatient(patientRepository.findById(rendezVousDto.getPatientId()).orElseThrow(() -> new ResourceNotFoundException("Patient non trouvable")));
@@ -77,6 +79,7 @@ public class RendezVousService {
         return savedDto;
     }
 
+    @Cacheable(value = "rendezvous", key = "'id-' + #id")
     public RendezVousDto getById(long id){
         RendezVous rendezVous = rendezVousRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rendez vous non trouvable"));
         RendezVousDto rendezVousDto = rendezVousMapper.toDto(rendezVous);
@@ -90,12 +93,14 @@ public class RendezVousService {
         return rendezVousDto;
     }
 
+    @Cacheable(value = "rendezvous", key = "'list-' + #page + '-' + #size + '-' + #orderBy + '-' + #orderDir")
     public Page<RendezVousDto> getAll(int page , int size , String orderBy , String orderDir){
         Pageable pageable = buildPageable(page, size, orderBy, orderDir);
         return rendezVousRepository.findAll(pageable)
                 .map(this::toDtoWithRelations);
     }
 
+    @Cacheable(value = "rendezvous", key = "'date-' + #date + '-' + #page + '-' + #size + '-' + #orderBy + '-' + #orderDir")
     public Page<RendezVousDto> getByDate(String date , int page , int size , String orderBy , String orderDir){
         LocalDate parsedDate = LocalDate.parse(date);
         Pageable pageable = buildPageable(page, size, orderBy, orderDir);
@@ -103,12 +108,14 @@ public class RendezVousService {
                 .map(this::toDtoWithRelations);
     }
 
+    @Cacheable(value = "rendezvous", key = "'status-' + #status + '-' + #page + '-' + #size + '-' + #orderBy + '-' + #orderDir")
     public Page<RendezVousDto> getByStatus(String status , int page , int size , String orderBy , String orderDir){
         Pageable pageable = buildPageable(page, size, orderBy, orderDir);
         return rendezVousRepository.findByStatus(parseStatus(status), pageable)
                 .map(this::toDtoWithRelations);
     }
 
+    @CacheEvict(value = "rendezvous", allEntries = true)
     public RendezVousDto modify(RendezVousDto rendezVousDto){
         if (!rendezVousRepository.existsById(rendezVousDto.getId())){
             return null;
@@ -131,6 +138,7 @@ public class RendezVousService {
         return rendezVousDto1;
     }
 
+    @CacheEvict(value = "rendezvous", allEntries = true)
     public RendezVousDto annulerRdv(long id){
         RendezVous rendezVous = rendezVousRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rendez vous non trouvable"));
         rendezVous.setStatus(StatusRendezVous.ANNULE);
@@ -143,6 +151,7 @@ public class RendezVousService {
         return rendezVousDto;
     }
 
+    @CacheEvict(value = "rendezvous", allEntries = true)
     public RendezVousDto confirmeRdv(long id){
         RendezVous rendezVous = rendezVousRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rendez vous non trouvable"));
         rendezVous.setStatus(StatusRendezVous.CONFIRME);
@@ -167,6 +176,7 @@ public class RendezVousService {
         return rendezVousDto;
     }
 
+    @Cacheable(value = "rendezvous", key = "'like-patient-' + #nom")
     public List<RendezVousDto> getAllLikePation(String nom){
         List<RendezVous> rendezVous = rendezVousRepository.findAllLikePation(nom);
         if (rendezVous.isEmpty()){
@@ -183,6 +193,7 @@ public class RendezVousService {
         return rendezVousDtos;
     }
 
+    @Cacheable(value = "rendezvous", key = "'like-medecin-' + #nom")
     public List<RendezVousDto> getAllLikeMedecin(String nom){
         List<RendezVous> rendezVous = rendezVousRepository.findAllLikeMedecin(nom);
         if (rendezVous.isEmpty()) {
@@ -199,6 +210,7 @@ public class RendezVousService {
         return rendezVousDtos;
     }
 
+    @Cacheable(value = "rendezvous", key = "'patient-id-' + #id")
     public List<RendezVousDto> getByPatientId(long id){
         List<RendezVous> rendezVous = rendezVousRepository.findByPatientId(id);
         if (rendezVous.isEmpty()){
@@ -215,6 +227,7 @@ public class RendezVousService {
         return rendezVousDtos;
     }
 
+    @Cacheable(value = "rendezvous", key = "'medecin-id-' + #id")
     public List<RendezVousDto> getByMedecinId(long id){
         List<RendezVous> rendezVous = rendezVousRepository.findByMedecinId(id);
         if (rendezVous.isEmpty()){
@@ -230,5 +243,4 @@ public class RendezVousService {
         }
         return rendezVousDtos;
     }
-
 }

@@ -7,10 +7,11 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
-public class MedecinDto {
+public class MedecinDto implements Serializable {
     private long id;
     @NotNull(message = "Le champ 'nom' est obligatoire")
     private String nom;

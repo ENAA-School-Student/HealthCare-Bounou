@@ -6,10 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class RendezVousDto {
+public class RendezVousDto implements Serializable {
     private long id;
     @NotNull(message = "Le champ 'dateRendezVous' est obligatoire")
     @Future(message = "Le champ 'dateRendezVous' doit être une date future")
