@@ -19,6 +19,9 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Give mvnw execute permission
+        run: chmod +x mvnw
+
       - name: Compile
         run: ./mvnw clean compile -q
 
