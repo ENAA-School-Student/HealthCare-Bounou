@@ -25,7 +25,7 @@ public class PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
 
-    @Cacheable(value = "patients")
+    @Cacheable(value = "patients", key = "'list-' + #page + '-' + #size + '-' + #orderBy + '-' + #orderDir")
     public Page<PatientDto> getAllPatients(int page , int size , String orderBy , String orderDir){
 
         Sort sort = orderDir.equalsIgnoreCase("desc")
