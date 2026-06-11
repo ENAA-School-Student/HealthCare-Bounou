@@ -31,7 +31,7 @@ jobs:
           SPRING_CACHE_TYPE: none
           SPRING_DATA_REDIS_REPOSITORIES_ENABLED: false
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_EXPIRATION: 3600000
+          JWT_EXPIRATION: 3600000000
 
       - name: Build JAR
         run: ./mvnw package -DskipTests -q

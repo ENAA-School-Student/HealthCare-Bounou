@@ -2,6 +2,7 @@ package com.HealthCare.HealthCare.service;
 
 import com.HealthCare.HealthCare.dto.DossierMedicalDto;
 import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
+import com.HealthCare.HealthCare.utils.PdfGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.DossierMedicalMapper;
 import com.HealthCare.HealthCare.model.DossierMedical;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.HealthCare.HealthCare.repository.DossierMedicalRepository;
 
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 
 @Service
@@ -21,6 +23,16 @@ import java.time.LocalDate;
 public class DossierMedicalService {
     private final DossierMedicalRepository dossierMedicalRepository;
     private final DossierMedicalMapper dossierMedicalMapper;
+
+    public ByteArrayInputStream downloadDossierPdf(long id) {
+        DossierMedicalDto dto = getById(id);
+        return PdfGeneratorUtil.generateDossierPdf(dto, "Dossier Médical");
+    }
+
+    public ByteArrayInputStream downloadRapportSimple(long id) {
+        DossierMedicalDto dto = getById(id);
+        return PdfGeneratorUtil.generateDossierPdf(dto, "Rapport Médical");
+    }
 
     @CacheEvict(value = "dossiers", allEntries = true)
     public DossierMedicalDto createDossierMedical(DossierMedicalDto dossierMedicalDto){

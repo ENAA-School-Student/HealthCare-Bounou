@@ -7,6 +7,7 @@ import com.HealthCare.HealthCare.mapper.DossierMedicalMapper;
 import com.HealthCare.HealthCare.repository.DossierMedicalRepository;
 import com.HealthCare.HealthCare.repository.MedecinRepository;
 import com.HealthCare.HealthCare.repository.PatientRepository;
+import com.HealthCare.HealthCare.utils.ExcelGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import com.HealthCare.HealthCare.mapper.RendezVousMapper;
 import com.HealthCare.HealthCare.model.RendezVous;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.HealthCare.HealthCare.repository.RendezVousRepository;
 import com.HealthCare.HealthCare.exception.ResourceNotFoundException;
 
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,6 +35,11 @@ public class RendezVousService {
     private final DossierMedicalRepository dossierMedicalRepository;
     private final DossierMedicalService dossierMedicalService;
     private final DossierMedicalMapper dossierMedicalMapper;
+
+    public ByteArrayInputStream downloadPatientRendezVousExcel(long patientId) {
+        List<RendezVousDto> rdvList = getByPatientId(patientId);
+        return ExcelGeneratorUtil.generateRendezVousExcel(rdvList);
+    }
 
     private Pageable buildPageable(int page, int size, String orderBy, String orderDir) {
         Sort sort = orderDir.equalsIgnoreCase("desc")
