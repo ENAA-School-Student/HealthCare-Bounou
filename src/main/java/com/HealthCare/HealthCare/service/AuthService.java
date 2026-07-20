@@ -5,12 +5,14 @@ import com.HealthCare.HealthCare.dto.UserDto;
 import com.HealthCare.HealthCare.model.User;
 import com.HealthCare.HealthCare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -30,10 +32,12 @@ public class AuthService {
         user.setUsername(req.getUsername());
         user.setEmail(req.getEmail());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
-        if (req.getRole() == null){
+        log.info("User role: {}", req.getRole());
+        if (req.getRole() == null || req.getRole().equals("false")){
             user.setRole("ROLE_PATIENT");
+        } else {
+            user.setRole("ROLE_" + req.getRole());
         }
-        user.setRole("ROLE_" + req.getRole());
         userRepository.save(user);
 
         return jwtService.generateToken(user.getUsername());

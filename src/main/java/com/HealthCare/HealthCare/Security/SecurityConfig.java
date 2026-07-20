@@ -31,13 +31,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                    auth.requestMatchers("/api/auth/**" , "/V3/api-docs/**" ,  "/swagger-ui/**").permitAll()
+                    auth.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                             .requestMatchers("/medecin/**").hasAnyRole("ADMIN", "MEDECIN")
                             .requestMatchers("/patient/**").hasAnyRole("ADMIN", "MEDECIN", "PATIENT")
                             .requestMatchers("/dossier-medical/**").hasAnyRole("ADMIN", "MEDECIN")
                             .requestMatchers("/api/exports/**").hasAnyRole("ADMIN", "MEDECIN")
                             .requestMatchers("/rendez-vous/**").authenticated()
-                            .anyRequest().authenticated()
+                            .anyRequest().permitAll()
                 )
                 .authenticationProvider(authenticationProvider(customUserDetailsService))
                 .addFilterBefore(jwtAuthintificationFilter, UsernamePasswordAuthenticationFilter.class);
